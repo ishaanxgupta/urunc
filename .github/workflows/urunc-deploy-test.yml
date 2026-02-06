@@ -201,6 +201,26 @@ jobs:
           cat /tmp/logs.txt
           kubectl describe pod nginx-spt-arm64 || true
 
+      - name: Expose nginx-spt service and curl it (arm64)
+        if: matrix.arch == 'arm64'
+        run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: nginx-spt-arm64
+          spec:
+            selector:
+              run: nginx-spt-arm64
+            ports:
+              - port: 80
+                targetPort: 80
+                protocol: TCP
+          EOF
+          kubectl wait --for=condition=Ready pod/nginx-spt-arm64 --timeout=60s || true
+          kubectl run curl-nginx-spt --rm -i --restart=Never --image=curlimages/curl:8.5.0 -- \
+            -sS http://nginx-spt-arm64 || (kubectl logs nginx-spt-arm64 || true; exit 1)
+
       - name: Deploy httpreply-fc unikernel (amd64)
         if: matrix.arch == 'amd64'
         run: |
@@ -233,6 +253,26 @@ jobs:
           echo "=== LOGS ==="
           cat /tmp/logs.txt
           kubectl describe pod httpreply-fc-amd64 || true
+
+      - name: Expose httpreply-fc service and curl it (amd64)
+        if: matrix.arch == 'amd64'
+        run: |
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: httpreply-fc-amd64
+          spec:
+            selector:
+              run: httpreply-fc-amd64
+            ports:
+              - port: 80
+                targetPort: 8080
+                protocol: TCP
+          EOF
+          kubectl wait --for=condition=Ready pod/httpreply-fc-amd64 --timeout=60s || true
+          kubectl run curl-httpreply --rm -i --restart=Never --image=curlimages/curl:8.5.0 -- \
+            -sS http://httpreply-fc-amd64 || (kubectl logs httpreply-fc-amd64 || true; exit 1)
 
       - name: Uninstall urunc-deploy DaemonSet
         run: |
