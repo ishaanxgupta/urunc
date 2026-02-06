@@ -164,7 +164,11 @@ func handleQueueProxy(spec specs.Spec, configFile string) error {
 	}
 
 	redirectIPEnv := fmt.Sprintf("REDIRECT_IP=%s", constants.QueueProxyRedirectIP)
-	envs := []string{readinessProbeEnv, redirectIPEnv}
+	// Avoid appending an empty env entry if SERVING_READINESS_PROBE is not present.
+	envs := []string{redirectIPEnv}
+	if readinessProbeEnv != "" {
+		envs = append(envs, readinessProbeEnv)
+	}
 	spec.Process.Env = append(spec.Process.Env, envs...)
 
 	// Get permissions of specification file
