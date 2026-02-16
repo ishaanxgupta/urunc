@@ -137,7 +137,7 @@ func writePidFile(path string, pid int) error {
 		tmpDir  = filepath.Dir(path)
 		tmpName = filepath.Join(tmpDir, "."+filepath.Base(path))
 	)
-	f, err := os.OpenFile(tmpName, os.O_RDWR|os.O_CREATE|os.O_EXCL|os.O_SYNC, 0o666)
+	f, err := os.OpenFile(tmpName, os.O_RDWR|os.O_CREATE|os.O_EXCL|os.O_SYNC, 0o644)
 	if err != nil {
 		return err
 	}
