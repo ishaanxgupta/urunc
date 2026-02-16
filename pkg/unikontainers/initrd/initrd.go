@@ -24,7 +24,7 @@ import (
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 
-func AddInitrdRecord(w *cpio.Writer, content []byte, fileInfo *syscall.Stat_t, name string) error {
+func addInitrdRecord(w *cpio.Writer, content []byte, fileInfo *syscall.Stat_t, name string) error {
 	hdr := &cpio.Header{
 		Name:    name,
 		Mode:    cpio.FileMode(fileInfo.Mode),
@@ -57,7 +57,7 @@ func CopyFileToInitrd(w *cpio.Writer, srcFile string, destFile string) error {
 		if err != nil {
 			return fmt.Errorf("could not read file %s: %w", srcFile, err)
 		}
-		err = AddInitrdRecord(w, content, fileInfo, destFile)
+		err = addInitrdRecord(w, content, fileInfo, destFile)
 		if err != nil {
 			return fmt.Errorf("could not add record for %s: %w", srcFile, err)
 		}
@@ -106,7 +106,7 @@ func AddFileToInitrd(oldInitrd string, data string, name string) error {
 		Uid:  0,
 		Gid:  0,
 	}
-	err = AddInitrdRecord(w, []byte(data), &fileInfo, name)
+	err = addInitrdRecord(w, []byte(data), &fileInfo, name)
 	if err != nil {
 		return fmt.Errorf("Could not add file %s to initrd: %v", name, err)
 	}
