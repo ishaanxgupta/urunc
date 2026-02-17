@@ -35,11 +35,11 @@ func addInitrdRecord(w *cpio.Writer, content []byte, fileInfo *syscall.Stat_t, n
 	}
 	err := w.WriteHeader(hdr)
 	if err != nil {
-		return fmt.Errorf("could not write header in initrd: %v", err)
+		return fmt.Errorf("could not write header in initrd: %w", err)
 	}
 	_, err = w.Write(content)
 	if err != nil {
-		return fmt.Errorf("could not write contents in initrd: %v", err)
+		return fmt.Errorf("could not write contents in initrd: %w", err)
 	}
 
 	return nil
@@ -94,7 +94,7 @@ func CopyFileMountsToInitrd(oldInitrd string, mounts []specs.Mount) error {
 func AddFileToInitrd(oldInitrd string, data string, name string) error {
 	f, err := os.OpenFile(oldInitrd, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		return fmt.Errorf("could not open %s: %v", oldInitrd, err)
+		return fmt.Errorf("could not open %s: %w", oldInitrd, err)
 	}
 	defer f.Close()
 
