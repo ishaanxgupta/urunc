@@ -990,20 +990,20 @@ func (u *Unikontainer) FormatNsenterInfo() (rdr io.Reader, retErr error) {
 		})
 	}
 
-	var nsStringBuilder strings.Builder
+	var nsBuffer bytes.Buffer
 	if writePaths {
 		for i := 0; i < numNS; i++ {
 			if nsPaths[i] != "" {
-				if nsStringBuilder.Len() > 0 {
-					nsStringBuilder.WriteString(",")
+				if nsBuffer.Len() > 0 {
+					nsBuffer.WriteString(",")
 				}
-				nsStringBuilder.WriteString(nsPaths[i])
+				nsBuffer.WriteString(nsPaths[i])
 			}
 		}
 
 		r.AddData(&bytemsg{
 			Type:  nsPathsAttr,
-			Value: []byte(nsStringBuilder.String()),
+			Value: nsBuffer.Bytes(),
 		})
 
 	}
