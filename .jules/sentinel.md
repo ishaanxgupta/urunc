@@ -1,0 +1,4 @@
+## 2026-02-16 - Insecure Temporary File Permissions
+**Vulnerability:** Found `writePidFile` creating temporary PID files with `0666` permissions in `pkg/unikontainers/utils.go`, and `NewZerologMetrics` creating log files with `0666` permissions in `internal/metrics/metrics.go`. These allowed world-writable files, potentially enabling local attackers to tamper with PID files or logs if the directory permissions were also loose.
+**Learning:** When using `os.OpenFile` with `os.O_CREATE`, the mode argument sets the permissions for the new file. Using `0666` relies entirely on `umask` for security, which might be too permissive in some environments (e.g., umask 0000).
+**Prevention:** Always use restrictive permissions (e.g., `0644` or `0600`) when creating files, especially those containing sensitive information or control data like PIDs. Do not rely solely on umask.

@@ -35,8 +35,9 @@ func TestWritePidFile(t *testing.T) {
 	assert.NoError(t, err, "Expected no error in writing PID file")
 
 	// Check if the PID file exists
-	_, err = os.Stat(pidFilePath)
+	info, err := os.Stat(pidFilePath)
 	assert.NoError(t, err, "Expected PID file to exist")
+	assert.Equal(t, os.FileMode(0644), info.Mode().Perm(), "Expected PID file to have 0644 permissions")
 
 	// Check if the content of the PID file is correct
 	content, err := os.ReadFile(pidFilePath)
